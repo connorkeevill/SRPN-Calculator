@@ -65,6 +65,4 @@ class SRPNInputParser:
     # | Prints the value of the top item on the stack.
     # |---------------------------------------------
     def equals(self):
-        number = self.stack.pop()
-        print(number)
-        self.stack.push(number)
+        print(self.stack.peek())

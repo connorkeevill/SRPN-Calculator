@@ -28,3 +28,11 @@ class SRPNStack:
     # |------------------------------
     def pop(self):
         return self.stack.pop().getValue()
+
+    # | peek()
+    # |----------------------------------------------------
+    # | Returns the value of either the top item on the
+    # | stack, or the value specified by the index.
+    # |-----------------------------------------
+    def peek(self, index=0):
+        return self.stack[-1 - index].getValue()
