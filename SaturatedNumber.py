@@ -1,7 +1,8 @@
 
 # | SaturatedNumber()
-# |--------------------------------------------
-# | Class for a number which is saturated
+# |---------------------------------------------------------
+# | Class for a number which is saturated to a given value.
+# |----------------------------------------------------
 class SaturatedNumber:
 
     def __init__(self, saturation, value=0):
