@@ -10,11 +10,12 @@ class SRPNInputParser:
 
     def __init__(self):
         # | Create the stack using the saturation specified
-        self.stack = SRPNStack()
+        self.stack = SRPNStack(100)
 
         # | A dictionary that contains the set of all available operations
         # | and the corresponding methods to perform the operation.
-        self.operations = {"+" : self.add, "-" : self.subtract, "=" : self.equals}
+        self.operations = {"+" : self.add, "-" : self.subtract, "*" : self.multiply, "/" : self.divide,
+                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals}
 
     # | parse()
     # |--------------------------------------------
@@ -59,6 +60,42 @@ class SRPNInputParser:
     def subtract(self):
         operand1, operand2 = self.popOperands()
         self.stack.push(operand2 - operand1)
+
+    # | multiply()
+    # |--------------------------------------------
+    # | Pops the top two items off the stack and
+    # | pushes their product back onto it.
+    # |--------------------------------
+    def multiply(self):
+        operand1, operand2 = self.popOperands()
+        self.stack.push(operand1 * operand2)
+
+    # | divide()
+    # |----------------------------------------------------------------
+    # | Pops the top two items off the stack and divides the second
+    # | one by the top one, pushing the result back onto it.
+    # |------------------------------------------------
+    def divide(self):
+        operand1, operand2 = self.popOperands()
+        self.stack.push(operand2 / operand1)
+
+    # | exponentiate()
+    # |-----------------------------------------------------------------------
+    # | Pops the top two items off the stack and raises the second one to
+    # | the power of the first one, pushing the result back onto it.
+    # |---------------------------------------------------------
+    def exponentiate(self):
+        operand1, operand2 = self.popOperands()
+        self.stack.push(operand2 ** operand1)
+
+    # | mod()
+    # |-----------------------------------------------------------------
+    # | Pops the top two items off the stack, mods the second one by
+    # | the top one and pushes the result back onto the stack.
+    # |-----------------------------------------------
+    def mod(self):
+        operand1, operand2 = self.popOperands()
+        self.stack.push(operand2 % operand1)
 
     # | equals()
     # |-------------------------------------------------
