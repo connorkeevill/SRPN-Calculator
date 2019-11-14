@@ -1,4 +1,5 @@
 from SRPNStack import SRPNStack
+from exceptions import StackOverflowException, StackUnderflowException, StackEmptyException
 
 # | SRPNInputParser
 # |------------------------------------------------------------------------
@@ -31,17 +32,29 @@ class SRPNInputParser:
         for item in inputList:
             # | Either perform the operation.
             if item in self.operations:
-                self.operations[item]()
-            # | Or add the operand to the stack.
+                try:
+                    self.operations[item]()
+                except StackUnderflowException as e:
+                    print(e.message)
+            # | Or try to add the operand to the stack.
             else:
-                self.stack.push(int(item))
+                # | Try-except block to catch a stack overflow.
+                try:
+                    self.stack.push(int(item))
+                # | Output the error message in the event of a stack overflow.
+                except StackOverflowException as e:
+                    print(e.message)
 
     # | popOperands()
-    # |---------------------------------------------------------------
-    # | Pops the top two operands off of the stack and returns them.
-    # |-----------------------------------------------------------
+    # |-----------------------------------------------------------------------
+    # | Try to pop the top two operands off of the stack and return them,
+    # | them, handling the possible exception of a stack underflow.
+    # |--------------------------------------------------------
     def popOperands(self):
-        return (self.stack.pop(), self.stack.pop())
+        operand2 = self.stack.pop(1)
+        operand1 = self.stack.pop()
+
+        return operand1, operand2
 
     # | add()
     # |--------------------------------------------------
@@ -102,4 +115,7 @@ class SRPNInputParser:
     # | Prints the value of the top item on the stack.
     # |---------------------------------------------
     def equals(self):
-        print(self.stack.peek())
+        try:
+            print(self.stack.peek())
+        except StackEmptyException as e:
+            print(e.message)
