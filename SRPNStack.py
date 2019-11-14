@@ -1,4 +1,5 @@
 from SaturatedNumber import SaturatedNumber
+from exceptions import StackOverflowException, StackUnderflowException, StackEmptyException
 
 # | SRPNStack()
 # |---------------------------------------------------------
@@ -10,6 +11,8 @@ class SRPNStack:
 
         self.saturation = saturation
         self.stack = []
+        # | As defined by legacy system, there is a stack limit of 23
+        self.stackLimit = 23
 
     # | push()
     # |---------------------------------------------------------
@@ -17,17 +20,26 @@ class SRPNStack:
     # | as a parameter and pushes this onto the stack.
     # |-----------------------------------------
     def push(self, value):
-        number = SaturatedNumber(self.saturation, value)
-
-        self.stack.append(number)
+        # | If we've reached the stack limit, raise a StackOverflowException
+        if len(self.stack) >= self.stackLimit:
+            raise StackOverflowException
+        # | Otherwise just push onto the stack
+        else:
+            number = SaturatedNumber(self.saturation, value)
+            self.stack.append(number)
 
     # | pop()
     # |----------------------------------------
     # | Removes and returns the value of the
     # | top SaturatedNumber on the stack.
     # |------------------------------
-    def pop(self):
-        return self.stack.pop().getValue()
+    def pop(self, index=0):
+        # | If there are no items in the stack when trying to pop, raise a StackUnderflowException.
+        if len(self.stack) - index <= 0:
+            raise StackUnderflowException()
+        # | Otherwise, pop the top item off the stack.
+        else:
+            return self.stack.pop(-1 - index).getValue()
 
     # | peek()
     # |----------------------------------------------------
@@ -35,4 +47,13 @@ class SRPNStack:
     # | stack, or the value specified by the index.
     # |-----------------------------------------
     def peek(self, index=0):
+        # | If trying to peek at an empty stack, raise a StackEmptyException
+        if len(self.stack) == 0:
+            raise StackEmptyException
+
+        if index > len(self.stack):
+            raise IndexError
+
+        # | We do [-1 - index] as this let's an index of, say, 4 to be
+        # | passed, getting the 4th item from the top of the stack.
         return self.stack[-1 - index].getValue()
