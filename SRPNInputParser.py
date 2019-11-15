@@ -16,7 +16,7 @@ class SRPNInputParser:
         # | A dictionary that contains the set of all available operations
         # | and the corresponding methods to perform the operation.
         self.operations = {"+" : self.add, "-" : self.subtract, "*" : self.multiply, "/" : self.divide,
-                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals}
+                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d}
 
     # | parse()
     # |--------------------------------------------
@@ -121,3 +121,19 @@ class SRPNInputParser:
             print(self.stack.peek())
         except StackEmptyException as e:
             print(e.message)
+
+    # | d()
+    # |-------------------------------------------------------
+    # | The 'd' function. Prints the contents of the stack.
+    # |-------------------------------------------------
+    def d(self):
+        # | Get the number of items in the stack
+        items = self.stack.count()
+
+        # | We iterate from 1 to items + 1 (instead of 0 to items) as this
+        # | allows us to peek at the stack with the right index
+        for i in range(1, items + 1):
+
+            print(self.stack.peek(items - i))
+
+

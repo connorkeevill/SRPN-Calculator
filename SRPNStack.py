@@ -64,3 +64,10 @@ class SRPNStack:
         # | We do [-1 - index] as this let's an index of, say, 4 to be
         # | passed, getting the 4th item from the top of the stack.
         return self.stack[-1 - index].getValue()
+
+    # | count()
+    # |--------------------------------------------
+    # | Returns the number of items on the stack.
+    # |----------------------------------------
+    def count(self):
+        return len(self.stack)
