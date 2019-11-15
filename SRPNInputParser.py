@@ -37,11 +37,13 @@ class SRPNInputParser:
                 except StackUnderflowException as e:
                     print(e.message)
             # | If the item is an operand (i.e. just digit)
-            else:
+            elif item.isdigit():
                 try:
                     self.stack.push(int(item))
                 except StackOverflowException as e:
                     print(e.message)
+            else:
+                self.unrecognisedInput(item)
 
     # | popOperands()
     # |-----------------------------------------------------------------------
@@ -135,5 +137,12 @@ class SRPNInputParser:
         for i in range(1, items + 1):
 
             print(self.stack.peek(items - i))
+
+    # | unrecognisedInput()
+    # |-----------------------------------------------------------
+    # | Outputs a warning message should an input be erroneous.
+    # |-----------------------------------------------------
+    def unrecognisedInput(self, string):
+        print("Unrecognised operator or operand \"" + string + "\".")
 
 
