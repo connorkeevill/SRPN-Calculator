@@ -9,9 +9,9 @@ from exceptions import StackOverflowException, StackUnderflowException, StackEmp
 # |--------------------------------------------------------
 class SRPNInputParser:
 
-    def __init__(self):
+    def __init__(self, saturation):
         # | Create the stack using the saturation specified
-        self.stack = SRPNStack(100)
+        self.stack = SRPNStack(saturation)
 
         # | A dictionary that contains the set of all available operations
         # | and the corresponding methods to perform the operation.
@@ -30,18 +30,16 @@ class SRPNInputParser:
 
         # | Iterate through the list
         for item in inputList:
-            # | Either perform the operation.
+            # | If the item is an operation
             if item in self.operations:
                 try:
                     self.operations[item]()
                 except StackUnderflowException as e:
                     print(e.message)
-            # | Or try to add the operand to the stack.
+            # | If the item is an operand (i.e. just digit)
             else:
-                # | Try-except block to catch a stack overflow.
                 try:
                     self.stack.push(int(item))
-                # | Output the error message in the event of a stack overflow.
                 except StackOverflowException as e:
                     print(e.message)
 
@@ -51,6 +49,9 @@ class SRPNInputParser:
     # | them, handling the possible exception of a stack underflow.
     # |--------------------------------------------------------
     def popOperands(self):
+        # | We pop the second item off the stack before the first on. This
+        # | means that any exceptions caused by a stack underflow will
+        # | be raised before we've removed an item off the stack.
         operand2 = self.stack.pop(1)
         operand1 = self.stack.pop()
 
@@ -115,6 +116,7 @@ class SRPNInputParser:
     # | Prints the value of the top item on the stack.
     # |---------------------------------------------
     def equals(self):
+        # | Try to peek at the top item, but catch the exception if the stack is empty.
         try:
             print(self.stack.peek())
         except StackEmptyException as e:

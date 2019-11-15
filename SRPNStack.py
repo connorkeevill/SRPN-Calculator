@@ -11,14 +11,18 @@ class SRPNStack:
 
         self.saturation = saturation
         self.stack = []
+
         # | As defined by legacy system, there is a stack limit of 23
         self.stackLimit = 23
 
     # | push()
-    # |---------------------------------------------------------
-    # | Creates a SaturatedNumber() out of the value passed
-    # | as a parameter and pushes this onto the stack.
-    # |-----------------------------------------
+    # |-------------------------------------------------------------
+    # | Checks that there is still space on the stack, raising
+    # | StackOverflowException if not, creates a new
+    # | SaturatedNumber() based on the value
+    # | parameter, and pushes this
+    # | onto the stack.
+    # |----------
     def push(self, value):
         # | If we've reached the stack limit, raise a StackOverflowException
         if len(self.stack) >= self.stackLimit:
@@ -29,10 +33,13 @@ class SRPNStack:
             self.stack.append(number)
 
     # | pop()
-    # |----------------------------------------
-    # | Removes and returns the value of the
-    # | top SaturatedNumber on the stack.
-    # |------------------------------
+    # |---------------------------------------------------------------
+    # | Checks that there are enough items on the stack, raising
+    # | a StackUnderflowException if not, and returns either
+    # | the value of the top item, or the value of the
+    # | item specified by the index given, and
+    # | removes that item from the stack.
+    # |-----------------------------
     def pop(self, index=0):
         # | If there are no items in the stack when trying to pop, raise a StackUnderflowException.
         if len(self.stack) - index <= 0:
