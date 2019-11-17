@@ -1,5 +1,6 @@
 from SRPNStack import SRPNStack
 from exceptions import StackOverflowException, StackUnderflowException, StackEmptyException
+import randomNumbers
 
 # | SRPNInputParser
 # |------------------------------------------------------------------------
@@ -16,7 +17,7 @@ class SRPNInputParser:
         # | A dictionary that contains the set of all available operations
         # | and the corresponding methods to perform the operation.
         self.operations = {"+" : self.add, "-" : self.subtract, "*" : self.multiply, "/" : self.divide,
-                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d}
+                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d, "r" : self.r}
 
     # | parse()
     # |--------------------------------------------
@@ -137,6 +138,19 @@ class SRPNInputParser:
         for i in range(1, items + 1):
 
             print(self.stack.peek(items - i))
+
+    # | r()
+    # |------------------------------------------------
+    # | Pushes a random number to the stack based on
+    # | GLIBC random number generator used by C.
+    # |--------------------------------------
+    def r(self):
+        # | Get the random number an put it on the stack
+        randomNumber = randomNumbers.numbers[randomNumbers.index]
+        self.stack.push(randomNumber)
+
+        # | Increment the index to move on the next number
+        randomNumbers.index += 1
 
     # | unrecognisedInput()
     # |-----------------------------------------------------------

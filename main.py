@@ -1,6 +1,6 @@
 from SRPNInputParser import SRPNInputParser
 
-saturation = 100
+saturation = 2147483647
 
 # | Create the parser object
 parser = SRPNInputParser(saturation)
