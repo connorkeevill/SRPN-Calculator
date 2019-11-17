@@ -1,6 +1,7 @@
 from SRPNStack import SRPNStack
 from exceptions import StackOverflowException, StackUnderflowException, StackEmptyException
 import randomNumbers
+import sys
 
 # | SRPNInputParser
 # |------------------------------------------------------------------------
@@ -17,7 +18,8 @@ class SRPNInputParser:
         # | A dictionary that contains the set of all available operations
         # | and the corresponding methods to perform the operation.
         self.operations = {"+" : self.add, "-" : self.subtract, "*" : self.multiply, "/" : self.divide,
-                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d, "r" : self.r}
+                           "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d, "r" : self.r,
+                           "£" : self.poundSign}
 
     # | parse()
     # |--------------------------------------------
@@ -49,7 +51,7 @@ class SRPNInputParser:
                 # | Re-parse the newly generated string
                 self.parse(splitItem)
 
-            # | If the item is totally unrecognised
+            # | If the item is totally foreign
             else:
                 self.unrecognisedInput(item)
 
@@ -180,6 +182,13 @@ class SRPNInputParser:
 
         # | Increment the index to move on the next number
         randomNumbers.index += 1
+
+    # | poundSign()
+    # |----------------------------------------------------
+    # | The '£' function. Causes the calculator to exit.
+    # |---------------------------------------------
+    def poundSign(self):
+        sys.exit()
 
     # | unrecognisedInput()
     # |-----------------------------------------------------------
