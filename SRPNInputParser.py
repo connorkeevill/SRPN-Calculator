@@ -33,18 +33,47 @@ class SRPNInputParser:
         for item in inputList:
             # | If the item is an operation
             if item in self.operations:
-                try:
-                    self.operations[item]()
-                except StackUnderflowException as e:
-                    print(e.message)
+                self.performOperation(item)
+
             # | If the item is an operand (i.e. just digit)
             elif item.isdigit():
-                try:
-                    self.stack.push(int(item))
-                except StackOverflowException as e:
-                    print(e.message)
+                self.pushOntoStack(item)
+
+            # | If we have operands that are 'stuck' to operators
+            elif len(item) > 1:
+                # | Make list out of the string, then put back into a string separated by spaces
+                # | to allow it to be re-separated into a list in the next parse() call.
+                splitItem = [character for character in item]
+                splitItem = " ".join(splitItem)
+
+                # | Re-parse the newly generated string
+                self.parse(splitItem)
+
+            # | If the item is totally unrecognised
             else:
                 self.unrecognisedInput(item)
+
+    # | pushOntoStack()
+    # |------------------------------------------------------------------
+    # | Pushes item passed as a parameter onto the stack, catching the
+    # | exception that may be raised if the stack is already full.
+    # |-------------------------------------------------------
+    def pushOntoStack(self, item):
+        try:
+            self.stack.push(int(item))
+        except StackOverflowException as e:
+            print(e.message)
+
+    # | performOperation()
+    # |--------------------------------------------------------------
+    # | Tries to perform the operation passed as a parameter, but
+    # | catches the exception of having no items on the stack.
+    # |---------------------------------------------------
+    def performOperation(self, operation):
+        try:
+            self.operations[operation]()
+        except StackUnderflowException as e:
+            print(e.message)
 
     # | popOperands()
     # |-----------------------------------------------------------------------
@@ -67,7 +96,7 @@ class SRPNInputParser:
     # |------------------------------------------
     def add(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand1 + operand2)
+        self.pushOntoStack(operand1 + operand2)
 
     # | subtract()
     # |--------------------------------------------------------------------
@@ -76,7 +105,7 @@ class SRPNInputParser:
     # |----------------------------------------------------------
     def subtract(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand2 - operand1)
+        self.pushOntoStack(operand2 - operand1)
 
     # | multiply()
     # |--------------------------------------------
@@ -85,7 +114,7 @@ class SRPNInputParser:
     # |--------------------------------
     def multiply(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand1 * operand2)
+        self.pushOntoStack(operand1 * operand2)
 
     # | divide()
     # |----------------------------------------------------------------
@@ -94,7 +123,7 @@ class SRPNInputParser:
     # |------------------------------------------------
     def divide(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand2 / operand1)
+        self.pushOntoStack(operand2 / operand1)
 
     # | exponentiate()
     # |-----------------------------------------------------------------------
@@ -103,7 +132,7 @@ class SRPNInputParser:
     # |---------------------------------------------------------
     def exponentiate(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand2 ** operand1)
+        self.pushOntoStack(operand2 ** operand1)
 
     # | mod()
     # |-----------------------------------------------------------------
@@ -112,7 +141,7 @@ class SRPNInputParser:
     # |-----------------------------------------------
     def mod(self):
         operand1, operand2 = self.popOperands()
-        self.stack.push(operand2 % operand1)
+        self.pushOntoStack(operand2 % operand1)
 
     # | equals()
     # |-------------------------------------------------
