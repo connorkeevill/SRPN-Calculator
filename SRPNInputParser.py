@@ -58,10 +58,6 @@ class SRPNInputParser:
                 # | Re-parse the newly generated string
                 self.parse(splitItem)
 
-            # | If the item is totally foreign
-            else:
-                self.unrecognisedInput(item)
-
     # | pushOperand()
     # |------------------------------------------------------------------
     # | Pushes item passed as a parameter onto the stack, catching the
@@ -148,7 +144,11 @@ class SRPNInputParser:
     # |---------------------------------------------------------
     def exponentiate(self):
         operand1, operand2 = self.popOperands()
-        self.pushOperand(operand2 ** operand1)
+
+        if operand1 < 0:
+            print("Negative power.")
+        else:
+            self.pushOperand(operand2 ** operand1)
 
     # | mod()
     # |-----------------------------------------------------------------
