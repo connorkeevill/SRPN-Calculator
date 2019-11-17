@@ -19,7 +19,9 @@ class SRPNInputParser:
         # | and the corresponding methods to perform the operation.
         self.operations = {"+" : self.add, "-" : self.subtract, "*" : self.multiply, "/" : self.divide,
                            "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d, "r" : self.r,
-                           "£" : self.poundSign}
+                           "£" : self.poundSign, "#" : self.comment}
+
+        self.isCommenting = False
 
     # | parse()
     # |--------------------------------------------
@@ -33,6 +35,11 @@ class SRPNInputParser:
 
         # | Iterate through the list
         for item in inputList:
+
+            # | If we're in the middle of a comment and the comment isn't ending, just skip this iteration
+            if self.isCommenting and item != "#":
+                continue
+
             # | If the item is an operation
             if item in self.operations:
                 self.performOperation(item)
@@ -189,6 +196,13 @@ class SRPNInputParser:
     # |---------------------------------------------
     def poundSign(self):
         sys.exit()
+
+    # | comment()
+    # |---------------------------------------------------------------
+    # | Allows comments to be inputted. Toggles the commenting flag.
+    # |-----------------------------------------------------------
+    def comment(self):
+        self.isCommenting = not self.isCommenting
 
     # | unrecognisedInput()
     # |-----------------------------------------------------------
