@@ -23,7 +23,7 @@ class SaturatedNumber:
             self.value = self.saturation
         # | If smaller
         elif value < -self.saturation - 1:
-            self.value = -self.saturation
+            self.value = -self.saturation - 1
         # | If within range
         else:
             self.value = value
