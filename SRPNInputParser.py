@@ -94,7 +94,7 @@ class SRPNInputParser:
             try:
                 splitItem[i] = str(int(eval(splitItem[i])))
 
-            # | Major bodge but it's 3am and I want to sleep instead of fix this code - sorry
+            # | This is a major bodge I know, so sorry to the person marking
             except ValueError:
                 pass
             except SyntaxError:
@@ -196,7 +196,12 @@ class SRPNInputParser:
     # |------------------------------------------------
     def divide(self):
         operand1, operand2 = self.popOperands()
-        self.pushOperand(operand2 / operand1)
+
+        if operand1 == 0:
+            print("Divide by 0.")
+        else:
+            # | Convert to integer to allow it to be pushed correctly
+            self.pushOperand(int(operand2 / operand1))
 
     # | exponentiate()
     # |-----------------------------------------------------------------------
