@@ -1,5 +1,6 @@
 from SRPNStack import SRPNStack
 from exceptions import StackOverflowException, StackUnderflowException, StackEmptyException
+import helpers
 import randomNumbers
 import sys
 
@@ -21,6 +22,7 @@ class SRPNInputParser:
                            "^" : self.exponentiate, "%" : self.mod, "=" : self.equals, "d" : self.d, "r" : self.r,
                            "£" : self.poundSign, "#" : self.comment}
 
+        # | Flag which keeps track of whether or not the current input is a comment.
         self.isCommenting = False
 
     # | parse()
@@ -36,34 +38,83 @@ class SRPNInputParser:
         # | Iterate through the list
         for item in inputList:
 
-            # | If we're in the middle of a comment and the comment isn't ending, just skip this iteration
+            # | If we're in the middle of a comment and the comment isn't ending, just skip this iteration.
             if self.isCommenting and item != "#":
                 continue
 
-            # | If the item is an operation
+            # | If the item is an operation.
             if item in self.operations:
                 self.performOperation(item)
 
-            # | If the item is an operand (i.e. just digit)
-            elif item.isdigit():
+            # | If the item is an operand (i.e. positive or negative number).
+            elif item.isdigit() or helpers.isNegativeNumber(item):
                 self.pushOperand(item)
 
-            # | If we have operands that are 'stuck' to operators
+            # | If we have operands that are 'stuck' to operators.
             elif len(item) > 1:
-                # | Make list out of the string, then put back into a string separated by spaces
-                # | to allow it to be re-separated into a list in the next parse() call.
-                splitItem = [character for character in item]
-                splitItem = " ".join(splitItem)
+                self.parseNoSpaces(item)
 
-                # | Re-parse the newly generated string
-                self.parse(splitItem)
+            # | If the item is totally foreign.
+            else:
+                self.unrecognisedInput(item)
+
+    # | parseNoSpaces()
+    # |---------------------------------------------------------------------------
+    # | Function which will parse an input which isn't able to be separated by
+    # | its spaces, separating into each element which can be parsed again.
+    # |----------------------------------------------------------------
+    def parseNoSpaces(self, item):
+        validString = ''
+        splitItem = []
+
+        # | Loop through each item and split into expressions which are either valid (and maybe infix) or invalid.
+        for character in item:
+            # | If the character isn't technically valid, append the validString and the invalid item to the list.
+            if not character.isdigit() and character not in self.operations:
+                splitItem.append(validString)
+                validString = ''
+                splitItem.append(character)
+
+            # | If the last character in the valid string is an operation and the new character to add
+            # | is also an operation, append the validString and the next operation to the list.
+            elif (len(validString) > 0) and (validString[-1] in self.operations and character in self.operations):
+
+                splitItem.append(validString)
+                validString = ''
+                splitItem.append(character)
+
+            else:
+                validString += character
+
+        splitItem.append(validString)
+
+        # | Try to evaluate any valid expressions as infix, but if the expression isn't valid (i.e. an exception
+        # | is raised when trying to evaluate it) we can just skip it - the next parse will catch it.
+        for i in range(len(splitItem)):
+            try:
+                splitItem[i] = str(int(eval(splitItem[i])))
+
+            # | Major bodge but it's 3am and I want to sleep instead of fix this code - sorry
+            except ValueError:
+                pass
+            except SyntaxError:
+                pass
+            except NameError:
+                pass
+
+        # | Make the list a string, so it can be re-split during the next parse
+        splitItem = " ".join(splitItem)
+        self.parse(splitItem)
 
     # | pushOperand()
     # |------------------------------------------------------------------
     # | Pushes item passed as a parameter onto the stack, catching the
-    # | exception that may be raised if the stack is already full.
-    # |-------------------------------------------------------
+    # | exception that may be raised if the stack is already full
+    # | or that an octal number has invalid digits (ie 8 or 9).
+    # |-----------------------------------------------------
     def pushOperand(self, item):
+        item = str(item)
+
         # | The base in which the operand should be interpreted
         base = 10
 
@@ -73,8 +124,18 @@ class SRPNInputParser:
 
         try:
             self.stack.push(int(item, base))
+
         except StackOverflowException as e:
             print(e.message)
+
+        except ValueError as e:
+            # | If the operand is octal, but contains an invalid digit, push it if 2 digits long
+            if len(item) == 2:
+                self.pushOperand(item[1:])
+            # | Or simply discard the operand.
+            else:
+                pass
+
 
     # | performOperation()
     # |--------------------------------------------------------------
@@ -217,5 +278,3 @@ class SRPNInputParser:
     # |-----------------------------------------------------
     def unrecognisedInput(self, string):
         print("Unrecognised operator or operand \"" + string + "\".")
-
-
