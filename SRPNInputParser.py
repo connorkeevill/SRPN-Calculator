@@ -258,7 +258,7 @@ class SRPNInputParser:
     def r(self):
         # | Get the random number an put it on the stack
         randomNumber = randomNumbers.numbers[randomNumbers.index]
-        self.stack.push(randomNumber)
+        self.pushOperand(randomNumber)
 
         # | Increment the index to move on the next number
         randomNumbers.index += 1
